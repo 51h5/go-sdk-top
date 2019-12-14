@@ -28,7 +28,7 @@ func New(appKey, secretKey string, timeout time.Duration) (client *Client) {
         checkRequest: true,
         appKey:       appKey,
         secretKey:    secretKey,
-        gateway:      GATEWAY_URL,
+        gateway:      kGatewayUrl,
         signType:     constants.SIGN_TYPE_MD5,
     }
 
@@ -38,7 +38,7 @@ func New(appKey, secretKey string, timeout time.Duration) (client *Client) {
         }
     } else {
         client.httpClient = &http.Client{
-            Timeout: HTTP_CLIENT_TIMEOUT,
+            Timeout: kHttpClientTimeout,
         }
     }
 
@@ -59,11 +59,11 @@ func (c *Client) Execute(req Request, res Response, session string) (code uint, 
     // 公共参数
     sv := url.Values{
         "app_key":     {c.appKey},
-        "format":      {FORMAT_TYPE_JSON},
+        "format":      {kFormat},
         "sign_method": {c.signType},
-        "v":           {API_VERSION},
-        "timestamp":   {time.Now().Format(TIME_LAYOUT)},
-        "partner_id":  {PARTNER_ID},
+        "v":           {kApiVersion},
+        "timestamp":   {time.Now().Format(kTimeFormat)},
+        "partner_id":  {kPartnerId},
         // "simplify":       {"true"},
         // "session":        {session},
         // "target_app_key": {req.TargetAppKey()},
@@ -89,7 +89,7 @@ func (c *Client) Execute(req Request, res Response, session string) (code uint, 
     }
 
     // 计算签名
-    sv.Set(KEY_SIGN, c.sign(sv, av, req))
+    sv.Set(kKeySign, c.sign(sv, av, req))
 
     if c.debug {
         fmt.Printf("[top.Execute] 请求地址: %s?%s\n", c.gateway, sv.Encode())
@@ -101,7 +101,7 @@ func (c *Client) Execute(req Request, res Response, session string) (code uint, 
     } else {
         r, err = http.NewRequest("POST", c.gateway+"?"+sv.Encode(), bytes.NewReader(req.Body()))
         if err == nil {
-            r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+            r.Header.Set("Content-Type", kContentType)
         }
     }
 
@@ -180,14 +180,13 @@ func parseJsonResponse(body []byte, res Response) error {
 
 func doRequest(c *http.Client, r *http.Request) ([]byte, error) {
     res, err := c.Do(r)
-    if err != nil {
-        if res != nil {
-            res.Body.Close()
-        }
-        return nil, err
+    if res != nil {
+        defer res.Body.Close()
     }
 
-    defer res.Body.Close()
+    if err != nil {
+        return nil, err
+    }
 
     if res.StatusCode != http.StatusOK {
         return nil, fmt.Errorf("response code %d", res.StatusCode)
