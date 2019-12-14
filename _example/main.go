@@ -2,7 +2,6 @@ package main
 
 import (
     "51h5.com/sdk/top"
-    "51h5.com/sdk/top/internal/constants"
     "51h5.com/sdk/top/request"
     "51h5.com/sdk/top/response"
     "fmt"
@@ -16,11 +15,11 @@ const (
 )
 
 func main() {
-    c := top.New(appKey, secret, 30 * time.Second)
-    c.SetGateway(gateway)
-    c.SetSignType(constants.SIGN_TYPE_MD5)
-
-    c.Debug(false)
+    // c := top.New(appKey, secret, 30 * time.Second)
+    // c.SetGateway(gateway)
+    // c.SetSignType(constants.SIGN_TYPE_MD5)
+    //
+    // c.Debug(false)
 
     // // 自定义 http client
     // c.SetHttpClient(&http.Client{
@@ -40,8 +39,9 @@ func main() {
     //     },
     // })
 
-    mixnick(c)
+    // mixnick(c)
     // avatar(c)
+    tt()
 }
 
 func mixnick(c *top.Client) {
@@ -82,4 +82,16 @@ func avatar(c *top.Client) {
     } else {
         fmt.Printf("<avatar> 调用失败: code=%v, msg=%s, subCode=%s, subMsg=%s\n", res.Error.Code, res.Error.Msg, res.Error.SubCode, res.Error.SubMsg)
     }
+}
+
+func tt() {
+    fmt.Printf("sec(1604848716632) = %s\n", time.Unix(1604848716632, 0).Format("2006-01-02 15:04:05"))
+    fmt.Printf("nsec(1604848716632) = %s\n", time.Unix(0, 1604848716632).Format("2006-01-02 15:04:05"))
+    fmt.Printf("nsec(1604848716632) = %s\n", time.Unix(0, 1604848716632 * 1000000).Format("2006-01-02 15:04:05"))
+    fmt.Printf("sec(1604848716632) = %d\n", time.Now().Unix())
+    fmt.Printf("sec(1604848716632) = %d\n", time.Now().UnixNano())
+    fmt.Printf("Duration(1604848716632) = %v\n", time.Duration(1604848716632))
+    fmt.Printf("Milliseconds(1604848716632) = %v\n", time.Duration(1604848716632).Milliseconds())
+    fmt.Printf("Milliseconds(1604848716632) = %v\n", (time.Duration(1604848716632) * time.Millisecond).Milliseconds())
+    fmt.Printf("Milliseconds(1604848716632) = %v\n", (time.Duration(1604848716632) * time.Millisecond).Nanoseconds())
 }
