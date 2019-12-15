@@ -15,6 +15,8 @@ import (
 type Client struct {
     debug        bool
     checkRequest bool
+    keepAlive    bool
+    ua           string
     appKey       string
     secretKey    string
     signType     string
@@ -25,6 +27,7 @@ type Client struct {
 func New(appKey, secretKey string, timeout time.Duration) (client *Client) {
     client = &Client{
         // debug:      false,
+        keepAlive:    true,
         checkRequest: true,
         appKey:       appKey,
         secretKey:    secretKey,
@@ -110,6 +113,14 @@ func (c *Client) Execute(req Request, res Response, session string) (code uint, 
         return
     }
 
+    if !c.keepAlive {
+        r.Header.Set("Connection", "close")
+    }
+
+    if c.ua != "" {
+        r.Header.Set("User-Agent", c.ua)
+    }
+
     body, err := doRequest(c.httpClient, r)
     if err != nil {
         code = 998
@@ -138,6 +149,16 @@ func (c *Client) Debug(enable bool) {
 
 func (c *Client) CheckRequest(enable bool) {
     c.checkRequest = enable
+}
+
+func (c *Client) SetKeepAlive(v bool) {
+    c.keepAlive = v
+}
+
+func (c *Client) SetUserAgent(ua string) {
+    if ua != "" {
+        c.ua = ua
+    }
 }
 
 func (c *Client) SetGateway(v string) {
