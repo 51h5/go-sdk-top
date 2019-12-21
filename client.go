@@ -4,8 +4,8 @@ import (
     "51h5.com/sdk/top/internal/constants"
     "51h5.com/sdk/top/internal/utils"
     "bytes"
-    "encoding/json"
     "fmt"
+    jsoniter "github.com/json-iterator/go"
     "io/ioutil"
     "net/http"
     "net/url"
@@ -100,11 +100,11 @@ func (c *Client) Execute(req Request, res Response, session string) (code uint, 
 
     var r *http.Request
     if req.Body() == nil {
-        r, err = http.NewRequest("GET", c.gateway+"?"+sv.Encode(), nil)
+        r, err = http.NewRequest(kMethodGet, c.gateway+"?"+sv.Encode(), nil)
     } else {
-        r, err = http.NewRequest("POST", c.gateway+"?"+sv.Encode(), bytes.NewReader(req.Body()))
+        r, err = http.NewRequest(kMethodPost, c.gateway+"?"+sv.Encode(), bytes.NewReader(req.Body()))
         if err == nil {
-            r.Header.Set("Content-Type", kContentType)
+            r.Header.Set(kHeaderContentType, kContentTypeForm)
         }
     }
 
@@ -114,11 +114,11 @@ func (c *Client) Execute(req Request, res Response, session string) (code uint, 
     }
 
     if !c.keepAlive {
-        r.Header.Set("Connection", "close")
+        r.Header.Set(kHeaderConnection, kConnectionClose)
     }
 
     if c.ua != "" {
-        r.Header.Set("User-Agent", c.ua)
+        r.Header.Set(kHeaderUserAgent, c.ua)
     }
 
     body, err := doRequest(c.httpClient, r)
@@ -196,7 +196,7 @@ func (c *Client) sign(sysParams, apiParams url.Values, req Request) string {
 }
 
 func parseJsonResponse(body []byte, res Response) error {
-    return json.Unmarshal(body, res)
+    return jsoniter.Unmarshal(body, res)
 }
 
 func doRequest(c *http.Client, r *http.Request) ([]byte, error) {

@@ -5,13 +5,13 @@ import (
 )
 
 const(
-    error_code_arguments_missing = iota + 40
-    error_code_arguments_invalid
+    errCodeArgumentsMissing = iota + 40
+    errCodeArgumentsInvalid
 )
 
 func CheckNotEmpty(k string, v string) (code uint, err error) {
     if v == "" {
-        code = error_code_arguments_missing
+        code = errCodeArgumentsMissing
         err = fmt.Errorf("client-error:Missing required arguments: %s", k)
         return
     }
@@ -20,7 +20,7 @@ func CheckNotEmpty(k string, v string) (code uint, err error) {
 
 func CheckNotEmptyList(k string, v int) (code uint, err error) {
     if v == 0 {
-        code = error_code_arguments_missing
+        code = errCodeArgumentsMissing
         err = fmt.Errorf("client-error:Missing required arguments: %s", k)
         return
     }
