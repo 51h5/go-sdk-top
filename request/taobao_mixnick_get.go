@@ -1,7 +1,7 @@
 package request
 
 import (
-    "51h5.com/sdk/top/internal/utils"
+    "gitlab.51h5.com/go/sdk-top/internal/utils"
     "net/url"
 )
 

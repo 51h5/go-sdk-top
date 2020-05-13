@@ -1,10 +1,10 @@
 package utils
 
 import (
-    "51h5.com/sdk/top/internal/constants"
     "bytes"
     "crypto/md5"
     "fmt"
+    "gitlab.51h5.com/go/sdk-top/internal/constants"
     "net/url"
     "sort"
     "strings"
