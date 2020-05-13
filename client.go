@@ -1,11 +1,11 @@
 package top
 
 import (
-    "51h5.com/sdk/top/internal/constants"
-    "51h5.com/sdk/top/internal/utils"
     "bytes"
     "fmt"
     jsoniter "github.com/json-iterator/go"
+    "gitlab.51h5.com/go/sdk-top/internal/constants"
+    "gitlab.51h5.com/go/sdk-top/internal/utils"
     "io/ioutil"
     "net/http"
     "net/url"

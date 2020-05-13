@@ -1,46 +1,49 @@
 package main
 
 import (
-    "51h5.com/sdk/top"
-    "51h5.com/sdk/top/request"
-    "51h5.com/sdk/top/response"
     "fmt"
+    "gitlab.51h5.com/go/sdk-top"
+    "gitlab.51h5.com/go/sdk-top/internal/constants"
+    "gitlab.51h5.com/go/sdk-top/request"
+    "gitlab.51h5.com/go/sdk-top/response"
+    "net"
+    "net/http"
     "time"
 )
 
 const (
     appKey  = "23638943"
-    secret  = ""
+    secret  = "351aacf8f2f9cbfbea02011f0702bb78"
     gateway = "https://proxy.hz.taeapp.com/top/"
 )
 
 func main() {
-    // c := top.New(appKey, secret, 30 * time.Second)
-    // c.SetGateway(gateway)
-    // c.SetSignType(constants.SIGN_TYPE_MD5)
-    //
-    // c.Debug(false)
+    c := top.New(appKey, secret, 30 * time.Second)
+    c.SetGateway(gateway)
+    c.SetSignType(constants.SIGN_TYPE_MD5)
 
-    // // 自定义 http client
-    // c.SetHttpClient(&http.Client{
-    //     Timeout: 45 * time.Millisecond, // 整体超时 45秒 (连接超时 15秒 + 其他 30秒)
-    //     Transport: &http.Transport{
-    //         Proxy: http.ProxyFromEnvironment,
-    //         DialContext: (&net.Dialer{
-    //             Timeout:   15 * time.Second, // 连接超时 15秒
-    //             KeepAlive: 30 * time.Second,
-    //             // DualStack: true,
-    //         }).DialContext,
-    //         ForceAttemptHTTP2:     true,
-    //         MaxIdleConns:          100,
-    //         IdleConnTimeout:       90 * time.Second,
-    //         TLSHandshakeTimeout:   10 * time.Second,
-    //         ExpectContinueTimeout: 1 * time.Second,
-    //     },
-    // })
+    c.Debug(true)
 
-    // mixnick(c)
-    // avatar(c)
+    // 自定义 http client
+    c.SetHttpClient(&http.Client{
+        Timeout: 45 * time.Second, // 整体超时 45秒 (连接超时 15秒 + 其他 30秒)
+        Transport: &http.Transport{
+            Proxy: http.ProxyFromEnvironment,
+            DialContext: (&net.Dialer{
+                Timeout:   15 * time.Second, // 连接超时 15秒
+                KeepAlive: 30 * time.Second,
+                // DualStack: true,
+            }).DialContext,
+            ForceAttemptHTTP2:     true,
+            MaxIdleConns:          100,
+            IdleConnTimeout:       90 * time.Second,
+            TLSHandshakeTimeout:   10 * time.Second,
+            ExpectContinueTimeout: 1 * time.Second,
+        },
+    })
+
+    mixnick(c)
+    avatar(c)
     tt()
 }
 
