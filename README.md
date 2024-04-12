@@ -3,17 +3,17 @@ top sdk for golang
 
 ## Install
 
-1. 配置 gitlab
+1. 安装
 
 ```shell
-git config --global url.git@gitlab.51h5.com:2202.insteadOf https://gitlab.51h5.com
+go111MODULE=on go get -u https://github.com/51h5/go-sdk-top@latest
 ```
 
 2. 配置 golang
 
 ```shell
 go env -w GO111MODULE=on
-go env -w GOPRIVATE=gitlab.51h5.com
+go env -w GOPROXY=https://goproxy.cn,direct
 ```
 
 3. 配置 go.mod
