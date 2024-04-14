@@ -6,7 +6,7 @@ top sdk for golang
 1. 安装
 
 ```shell
-go111MODULE=on go get -u https://github.com/51h5/go-sdk-top@latest
+go111MODULE=on go get -u github.com/51h5/go-sdk-top@latest
 ```
 
 2. 配置 golang
