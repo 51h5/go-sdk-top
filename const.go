@@ -3,7 +3,7 @@ package top
 import "time"
 
 const (
-	kGatewayUrl        = "https://gw.api.taobao.com/router/rest"
+	kGatewayUrl        = "https://eco.taobao.com/router/rest"
 	kFormat            = "json"
 	kApiVersion        = "2.0"
 	kPartnerId         = "top-sdk-go-20191025"

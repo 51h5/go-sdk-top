@@ -13,15 +13,16 @@ import (
 )
 
 const (
-	appKey = "23638943"
+	appKey = ""
 	secret = ""
-	//gateway = "https://proxy.hz.taeapp.com/top/"
+	//gateway = "https://pre-gw.api.taobao.com/top/router/rest"
 )
 
 func main() {
 	c := top.New(appKey, secret, 30*time.Second)
 	//c.SetGateway(gateway)
 	c.SetSignType(constants.SIGN_TYPE_MD5)
+	//c.SetSignType(constants.SIGN_TYPE_HMAC_SHA256)
 
 	c.Debug(true)
 
@@ -43,9 +44,47 @@ func main() {
 		},
 	})
 
+	grant(c)
 	mixnick(c)
 	avatar(c)
 	tt()
+}
+
+func grant(c *top.Client) {
+	openid := ""
+	bizName := ""
+	bizScene := ""
+	amount := int64(2)
+	actId := ""
+	collectionIds := []string{""}
+	propertyId := ""
+
+	req := &request.AlibabaAlscGrowthInteractiveMiniGameIntegralGrantRequest{}
+	req.MiniGameGrantIntegralRequest = &request.MiniGameGrantIntegralRequest{
+		Amount:        amount,
+		ActId:         actId,
+		BizScene:      bizScene,
+		CollectionIds: collectionIds,
+		PropertyId:    propertyId,
+		RequestId:     fmt.Sprintf("%s-%s-%d-%d-%d", bizScene, openid, time.Now().UnixMilli(), 1, amount),
+		OpenId:        openid,
+	}
+	req.ExtParams = &request.MiniGameGrantIntegralExtParams{BizName: bizName}
+	res := &response.AlibabaAlscGrowthInteractiveMiniGameIntegralGrantResponse{}
+
+	code, err := c.Execute(req, res, "")
+	if err != nil {
+		fmt.Printf("<mixnick> 调用异常: code=%v, err=%s\n", code, err)
+		fmt.Printf("reqeust: %v\n", req)
+		fmt.Printf("response: %v\n", res)
+	}
+
+	if res.Success() {
+		fmt.Printf("<grant> 调用成功: %d/%d\n", res.Data.RealGrantValue, res.Data.AccountValue)
+	} else {
+		fmt.Printf("<grant> 调用失败: topError=%+v\n", res.Error)
+		fmt.Printf("<grant> 调用失败: data=%+v\n", res.Data)
+	}
 }
 
 func mixnick(c *top.Client) {

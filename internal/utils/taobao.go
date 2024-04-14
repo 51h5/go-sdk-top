@@ -2,7 +2,10 @@ package utils
 
 import (
 	"bytes"
+	"crypto/hmac"
 	"crypto/md5"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"net/url"
 	"sort"
@@ -49,7 +52,9 @@ func SignToRequest(params url.Values, body []byte, secret, signMethod string) st
 	}
 
 	// 4. 计算签名
-	if signMethod == constants.SIGN_TYPE_HMAC {
+	if signMethod == constants.SIGN_TYPE_HMAC_SHA256 {
+		return encryptHMACSHA256(buf.Bytes(), []byte(secret))
+	} else if signMethod == constants.SIGN_TYPE_HMAC {
 		return encryptHMAC(buf.String(), secret)
 	} else {
 		buf.WriteString(secret)
@@ -66,50 +71,8 @@ func encryptHMAC(s, secret string) string {
 	return ""
 }
 
-// TODO: HmacSHA256 签名算法
-func encryptHMACSHA256(s, secret string) string {
-	return ""
+func encryptHMACSHA256(b, secret []byte) string {
+	h := hmac.New(sha256.New, secret)
+	h.Write(b)
+	return strings.ToUpper(hex.EncodeToString(h.Sum(nil)))
 }
-
-// func SignToRequest(sysParams, apiParams url.Values) string {
-//     if sysParams == nil {
-//         return ""
-//     }
-//
-//     vs := url.Values{}
-//
-//     // 业务参数
-//     if apiParams != nil {
-//         for k := range apiParams {
-//             if apiParams.Get(k) != "" {
-//                 vs.Set(k, apiParams.Get(k))
-//             }
-//         }
-//     }
-//
-//     // 系统参数
-//     for k := range sysParams {
-//         if sysParams.Get(k) != "" {
-//             vs.Set(k, sysParams.Get(k))
-//         }
-//     }
-//
-//     keys := make([]string, 0, len(vs))
-//     for k := range vs {
-//         keys = append(keys, k)
-//     }
-//
-//     sort.Strings(keys)
-//
-//     var buf bytes.Buffer
-//     for _, k := range keys {
-//         // if buf.Len() > 0 {
-//         //     buf.WriteString("&")
-//         // }
-//         buf.WriteString(k)
-//         // buf.WriteString("=")
-//         buf.WriteString(vs.Get(k))
-//     }
-//
-//     return buf.String()
-// }
